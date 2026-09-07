@@ -114,9 +114,22 @@ Files and their OFL licenses are in `public/fonts/`.
 
 ## Deploying
 
-Static build, so anything works. Netlify or Cloudflare Pages, free tier:
+Deployed to GitHub Pages at **https://gro-usa.com** by
+`.github/workflows/deploy.yml`, which runs on every push to `main`.
 
-- Build command: `npm run build`
-- Publish directory: `dist`
+Pages must be set to **Settings → Pages → Source → GitHub Actions**. On the default
+"Deploy from a branch" setting GitHub runs Jekyll instead, which cannot build this site —
+it reads the `---` fences in `.astro` files as YAML front matter and errors out.
 
-Set `site` in `astro.config.mjs` to the real domain first — it drives the canonical URL.
+Two files pin the domain, and both matter:
+
+- `astro.config.mjs` → `site` drives canonical URLs and social metadata.
+- `public/CNAME` → copied into `dist/` on every build, which is what keeps the custom
+  domain attached across deploys. Deleting it will drop the domain on the next deploy.
+
+DNS at the registrar: four A records on the apex pointing at `185.199.108.153`,
+`185.199.109.153`, `185.199.110.153`, `185.199.111.153`, and a `www` CNAME to
+`camdentbrown272.github.io`.
+
+The build is a plain static bundle, so Netlify or Cloudflare Pages would also work —
+build command `npm run build`, publish directory `dist`.
