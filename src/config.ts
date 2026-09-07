@@ -23,7 +23,7 @@ export const site = {
  * Leave it empty and the form still works visually, but it will tell you
  * in the console that no endpoint is set instead of silently dropping emails.
  */
-export const waitlistEndpoint = '';
+export const waitlistEndpoint = 'https://gro-waitlist.grolaunch.workers.dev';
 
 /**
  * How the waitlist form encodes its POST.

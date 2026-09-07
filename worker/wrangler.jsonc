@@ -4,6 +4,12 @@
   "main": "waitlist.js",
   "compatibility_date": "2026-09-07",
 
+  // Pinned rather than defaulted, so a deploy cannot silently change them.
+  // Preview URLs are off: each one is another public endpoint that can send
+  // mail with the same key, and nothing here needs them.
+  "workers_dev": true,
+  "preview_urls": false,
+
   // Plain, non-secret config. Keep these here rather than in the dashboard:
   // `wrangler deploy` overwrites dashboard vars, so config-as-code avoids
   // silently losing them on the next deploy.
