@@ -1,0 +1,27 @@
+{
+  "name": "gro-launchpage",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camdentbrown272/gro_launchpage.git"
+  },
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/camdentbrown272/gro_launchpage/issues"
+  },
+  "homepage": "https://github.com/camdentbrown272/gro_launchpage#readme",
+  "dependencies": {
+    "astro": "^7.3.1"
+  },
+  "private": true,
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
+  }
+}

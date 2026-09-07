@@ -1,0 +1,254 @@
+---
+import { links, featureRequestSubject, featureRequestEndpoint } from '../config';
+---
+
+<div
+  class="request"
+  data-state="idle"
+  data-email={links.featureRequests}
+  data-subject={featureRequestSubject}
+  data-endpoint={featureRequestEndpoint}
+>
+  <form class="request__form" novalidate>
+    <label class="sr-only" for="request-body">What would make it worth opening?</label>
+    <textarea
+      id="request-body"
+      class="request__input"
+      name="request"
+      rows="4"
+      placeholder="A feature, a founder you want on here, something that annoys you…"
+      required></textarea>
+    <div class="request__actions">
+      <button class="request__button" type="submit">Send request</button>
+      <span class="request__hint">Subject is filled in for you.</span>
+    </div>
+  </form>
+
+  <p class="request__message" role="status" aria-live="polite"></p>
+
+  <p class="request__fallback" hidden>
+    {'Mail app didn’t open? Send it to '}
+    <button class="request__copy" type="button">{links.featureRequests}</button>
+  </p>
+</div>
+
+<style>
+  .request {
+    width: 100%;
+    max-width: 34rem;
+    margin-top: 1.75rem;
+  }
+
+  .request__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .request__input {
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: 10px;
+    padding: 0.85rem 0.95rem;
+    resize: vertical;
+    min-height: 6.5rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .request__input::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .request__input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-wash);
+  }
+
+  .request__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+
+  .request__button {
+    font: inherit;
+    font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    border-radius: 9px;
+    padding: 0.7rem 1.2rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .request__button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .request__hint {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+  }
+
+  .request__message {
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+    display: none;
+  }
+
+  .request[data-state='error'] .request__message,
+  .request[data-state='sent'] .request__message {
+    display: block;
+  }
+
+  .request[data-state='sending'] .request__input,
+  .request[data-state='sending'] .request__button {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .request[data-state='error'] .request__message {
+    color: #a8332a;
+  }
+
+  .request[data-state='sent'] .request__message {
+    color: var(--accent);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .request[data-state='error'] .request__message {
+      color: #ef8078;
+    }
+  }
+
+  .request__fallback {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    margin-top: 0.5rem;
+  }
+
+  .request__copy {
+    font: inherit;
+    color: var(--ink-soft);
+    background: none;
+    border: 0;
+    border-bottom: 1px dashed var(--rule-strong);
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .request__copy:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.request').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('form');
+    const input = root.querySelector<HTMLTextAreaElement>('textarea');
+    const message = root.querySelector<HTMLParagraphElement>('.request__message');
+    const fallback = root.querySelector<HTMLParagraphElement>('.request__fallback');
+    const copy = root.querySelector<HTMLButtonElement>('.request__copy');
+    if (!form || !input || !message || !fallback) return;
+
+    const email = root.dataset.email ?? '';
+    const endpoint = root.dataset.endpoint ?? '';
+    const subject = root.dataset.subject ?? 'Feature request';
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (root.dataset.state === 'sending') return;
+
+      const body = input.value.trim();
+      if (!body) {
+        root.dataset.state = 'error';
+        message.textContent = 'Write the request first and it will go straight to us.';
+        input.focus();
+        return;
+      }
+
+      // Preferred path: post it from the page. Nothing opens, nobody leaves.
+      if (endpoint) {
+        root.dataset.state = 'sending';
+        message.textContent = '';
+
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ request: body, subject }),
+          });
+
+          if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+
+          root.dataset.state = 'sent';
+          message.textContent = 'Sent — thank you. We read every one of these.';
+          input.value = '';
+        } catch (error) {
+          console.error('[Gro] Feature request failed to send.', error);
+          root.dataset.state = 'error';
+          message.textContent = "That didn't go through. Try again in a moment?";
+          fallback.hidden = false;
+        }
+        return;
+      }
+
+      // Fallback with no endpoint configured: hand off to the mail client.
+      // Assigning `location.href` to a mailto: does not navigate the page.
+      window.location.href =
+        `mailto:${email}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+
+      root.dataset.state = 'sent';
+      message.textContent = 'Opening your mail app with the request ready to send.';
+      fallback.hidden = false;
+      input.value = '';
+    });
+
+    input.addEventListener('input', () => {
+      if (root.dataset.state === 'error') {
+        root.dataset.state = 'idle';
+        message.textContent = '';
+      }
+    });
+
+    copy?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(email);
+        const original = copy.textContent;
+        copy.textContent = 'Copied';
+        window.setTimeout(() => {
+          copy.textContent = original;
+        }, 1600);
+      } catch {
+        // Clipboard blocked (insecure context, denied permission) — select it
+        // instead so it can still be copied by hand.
+        const range = document.createRange();
+        range.selectNodeContents(copy);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+    });
+  });
+</script>

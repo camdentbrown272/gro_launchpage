@@ -1,0 +1,116 @@
+---
+import type { Shot } from '../config';
+
+interface Props {
+  shot: Shot;
+}
+
+const { shot } = Astro.props;
+---
+
+<figure class="phone">
+  <div class="phone__body">
+    <div class="phone__island" aria-hidden="true"></div>
+    <div class="phone__screen">
+      {
+        shot.src ? (
+          <img src={shot.src} alt={shot.alt} width="390" height="844" loading="lazy" decoding="async" />
+        ) : (
+          <div class="placeholder">
+            <span class="placeholder__label">{shot.placeholder}</span>
+            <span class="placeholder__meta">screenshot</span>
+          </div>
+        )
+      }
+    </div>
+  </div>
+  {shot.caption && <figcaption class="phone__caption">{shot.caption}</figcaption>}
+</figure>
+
+<style>
+  .phone {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .phone__body {
+    position: relative;
+    width: 100%;
+    max-width: 15rem;
+    aspect-ratio: 9 / 19.5;
+    padding: 0.55rem;
+    border-radius: 2.2rem;
+    background: linear-gradient(160deg, var(--paper-raised), var(--paper-sunk));
+    border: 1px solid var(--rule-strong);
+    box-shadow: var(--shadow);
+  }
+
+  .phone__island {
+    position: absolute;
+    top: 1.15rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32%;
+    height: 0.75rem;
+    border-radius: 1rem;
+    background: var(--ink);
+    opacity: 0.82;
+    z-index: 2;
+  }
+
+  .phone__screen {
+    position: relative;
+    height: 100%;
+    border-radius: 1.75rem;
+    overflow: hidden;
+    background: var(--paper-sunk);
+  }
+
+  .phone__screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Placeholder shown until a real screenshot is dropped in. */
+  .placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-align: center;
+    padding: 1rem;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent 0 9px,
+      var(--rule) 9px 10px
+    );
+  }
+
+  .placeholder__label {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--ink-soft);
+  }
+
+  .placeholder__meta {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 99px;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .phone__caption {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+</style>

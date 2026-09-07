@@ -1,0 +1,578 @@
+---
+import Base from '../layouts/Base.astro';
+import Waitlist from '../components/Waitlist.astro';
+import PhoneFrame from '../components/PhoneFrame.astro';
+import FeatureRequest from '../components/FeatureRequest.astro';
+import { site, links, shots, heroShot, product } from '../config';
+
+const year = new Date().getFullYear();
+const awaitingShots = shots.every((shot) => shot.src === null);
+
+const pillars = [
+  {
+    title: 'Quotes, actually attributed',
+    body: 'Direct quotes from founders and operators, with the person and the source attached. If it can’t be traced back, it doesn’t go in.',
+  },
+  {
+    title: 'Reframes, not affirmations',
+    body: 'A different angle on something you’re stuck on. Not “believe in yourself” — a specific way to look at a specific problem.',
+  },
+  {
+    title: 'The non-obvious part',
+    body: 'Compressed lessons that normally take a few years and one expensive decision to learn on your own.',
+  },
+];
+
+const steps = [
+  {
+    title: 'Fifteen posts, hand-picked',
+    body: 'Chosen for signal, not for stickiness. Nothing makes the cut because it performs well — it makes the cut because it earns the sixty seconds.',
+  },
+  {
+    title: 'It resets at midnight, your time',
+    body: 'A new set tomorrow. Miss a day and it’s gone — there’s no backlog waiting to guilt you into catching up.',
+  },
+  {
+    title: 'The end is a real end',
+    body: 'Last card, then a screen that tells you you’re done for the day. That’s not a limitation. That’s the whole design.',
+  },
+];
+---
+
+<Base>
+  <header class="masthead">
+    <div class="wrap masthead__inner">
+      <a class="wordmark" href="/">{site.name}<span class="wordmark__dot">.</span></a>
+      {
+        links.instagram && (
+          <a class="masthead__link" href={links.instagram} target="_blank" rel="noopener noreferrer">
+            Instagram
+          </a>
+        )
+      }
+    </div>
+  </header>
+
+  <main>
+    <!-- ---------------------------------------------------------- hero -->
+    <section class="section hero">
+      <div class="wrap hero__inner">
+        <div class="hero__copy">
+        <p class="eyebrow">In development</p>
+        <h1 class="hero__title">A feed<br />that ends.</h1>
+        <p class="lede hero__lede">
+          {site.name} is fifteen posts a day about entrepreneurship, business, and making money. Read
+          them, close the app, go back to work. There is nothing after the fifteenth card &mdash; no
+          infinite scroll, no algorithm quietly learning what keeps you here.
+        </p>
+
+        <div class="hero__form">
+          <Waitlist source="hero" />
+        </div>
+
+        <ul class="facts">
+          <li class="fact"><strong>15</strong><span>posts a day</span></li>
+          <li class="fact"><strong>0</strong><span>ads or algorithms</span></li>
+          <li class="fact"><strong>{product.price}</strong><span>one-time purchase</span></li>
+        </ul>
+        </div>
+
+        <div class="hero__device">
+          <PhoneFrame shot={heroShot} />
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- -------------------------------------------------------- premise -->
+    <section class="section">
+      <div class="wrap split">
+        <div class="split__aside">
+          <p class="eyebrow">The premise</p>
+        </div>
+        <div class="split__main">
+          <h2>Every other feed is built to never end.</h2>
+          <div class="prose">
+            <p>
+              That is not a bug in the design, it is the design. The longer you stay, the more time
+              you lose on the thing you were actually trying to build. So you open an app to learn
+              one useful thing and leave forty minutes later having learned none of them.
+            </p>
+            <p>
+              {site.name} runs the other way around. A fixed number of cards, curated once a day.
+              The best possible outcome for us is that you close it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------- pillars -->
+    <section class="section band">
+      <div class="wrap">
+        <p class="eyebrow">What&rsquo;s in the fifteen</p>
+        <h2 class="band__title">Three kinds of card. Nothing else.</h2>
+        <ol class="pillars">
+          {
+            pillars.map((pillar, index) => (
+              <li class="pillar">
+                <span class="pillar__num">{String(index + 1).padStart(2, '0')}</span>
+                <h3>{pillar.title}</h3>
+                <p>{pillar.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- screenshots -->
+    <section class="section">
+      <div class="wrap">
+        <p class="eyebrow">A look at it</p>
+        <h2 class="centered-title">Open it, finish it, leave.</h2>
+        {
+          awaitingShots && import.meta.env.DEV && (
+            <p class="devnote">
+              {'Dev-only note: these are placeholder frames. Drop real exports in '}
+              <code>public/screenshots/</code>
+              {' and point '}
+              <code>shots[].src</code>
+              {' at them in '}
+              <code>src/config.ts</code>
+              {'. This note never appears in a production build.'}
+            </p>
+          )
+        }
+        <div class="shots">
+          {shots.map((shot) => <PhoneFrame shot={shot} />)}
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- ---------------------------------------------------------- steps -->
+    <section class="section">
+      <div class="wrap split">
+        <div class="split__aside">
+          <p class="eyebrow">How the day works</p>
+        </div>
+        <div class="split__main">
+          <ol class="steps">
+            {
+              steps.map((step) => (
+                <li class="step">
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------ feature requests -->
+    <section class="section band">
+      <div class="wrap split">
+        <div class="split__aside">
+          <p class="eyebrow">Requests</p>
+        </div>
+        <div class="split__main">
+          <h2>Want something in it?</h2>
+          <div class="prose">
+            <p>
+              Tell us what would make {site.name} worth opening, or who you want writing on it.
+              Write it here and it goes straight to us.
+            </p>
+          </div>
+          <FeatureRequest />
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------- honesty -->
+    <section class="section">
+      <div class="wrap split">
+        <div class="split__aside">
+          <p class="eyebrow">Straight up</p>
+        </div>
+        <div class="split__main">
+          <h2>Where the writing comes from.</h2>
+          <div class="prose">
+            <p>
+              Right now the cards are AI-generated, built on real-world ideologies and real
+              attributed quotes &mdash; and every single one says so on its face. We would rather
+              tell you that here than have you work it out later.
+            </p>
+            <p>
+              The plan is to replace it with the real thing: founders and operators writing
+              directly. That part is in progress now. People on this list get in first, at the price
+              before it moves.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------ final CTA -->
+    <section class="section closer">
+      <div class="wrap closer__inner">
+        <h2 class="closer__title">Fifteen a day.<br />Then you&rsquo;re done.</h2>
+        <div class="closer__form">
+          <Waitlist source="footer" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p class="footer__mark">{site.name}<span class="wordmark__dot">.</span></p>
+      <p class="footer__disclosure">AI generated content based on real-world ideologies.</p>
+      <nav class="footer__links">
+        {
+          links.instagram && (
+            <a href={links.instagram} target="_blank" rel="noopener noreferrer">
+              Instagram
+            </a>
+          )
+        }
+        {links.email && <a href={`mailto:${links.email}`}>Email</a>}
+        <span class="footer__copy">&copy; {year}</span>
+      </nav>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  /* --- masthead --- */
+  .masthead {
+    padding-block: 1.5rem;
+  }
+
+  .masthead__inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .wordmark__dot {
+    color: var(--accent);
+  }
+
+  .masthead__link {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+    padding-bottom: 1px;
+  }
+
+  .masthead__link:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+
+  /* --- hero --- */
+  .hero {
+    padding-block: clamp(3rem, 8vw, 6rem) clamp(4rem, 10vw, 7rem);
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 1fr) 17rem;
+      gap: 4rem;
+    }
+  }
+
+  /* A phone next to the headline is redundant when you're holding one. */
+  .hero__device {
+    display: none;
+  }
+
+  @media (min-width: 60rem) {
+    .hero__device {
+      display: block;
+    }
+  }
+
+  .hero__title {
+    margin-top: 1.25rem;
+  }
+
+  .hero__lede {
+    margin-top: 1.5rem;
+  }
+
+  .hero__form {
+    margin-top: 2.25rem;
+  }
+
+  /* Narrow screens: one fact per row, value and label on a shared baseline.
+     Three side-by-side columns don't fit and leave an orphan. */
+  .facts {
+    list-style: none;
+    margin: 3.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .fact {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .fact strong {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--accent);
+    min-width: 4.5ch;
+  }
+
+  @media (min-width: 40rem) {
+    .facts {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: clamp(1.5rem, 5vw, 3.5rem);
+    }
+
+    .fact {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .fact strong {
+      min-width: 0;
+    }
+  }
+
+  .fact span {
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* --- shared section furniture --- */
+  .band {
+    background: var(--paper-sunk);
+    border-block: 1px solid var(--rule);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .split__main {
+    max-width: 40rem;
+  }
+
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin-top: 1.5rem;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+  }
+
+  @media (min-width: 48rem) {
+    .split {
+      grid-template-columns: 12rem 1fr;
+      gap: 3rem;
+    }
+
+    .split__aside .eyebrow {
+      padding-top: 0.7rem;
+    }
+  }
+
+  /* --- pillars --- */
+  .band__title {
+    margin-top: 1.25rem;
+    max-width: 24ch;
+  }
+
+  .pillars {
+    list-style: none;
+    margin: 3.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 46rem) {
+    .pillars {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .pillar__num {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+  }
+
+  .pillar p {
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+  }
+
+  /* --- screenshots --- */
+  .centered-title {
+    margin-top: 1.25rem;
+  }
+
+  .shots {
+    margin-top: 3.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: clamp(1.75rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  .devnote {
+    margin-top: 1.5rem;
+    max-width: var(--measure);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    background: var(--accent-wash);
+    border: 1px dashed var(--accent);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+  }
+
+  .devnote code {
+    font-size: 0.95em;
+  }
+
+  /* --- steps --- */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .step:first-child {
+    padding-top: 0;
+  }
+
+  .step:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .step p {
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  /* --- closer --- */
+  .closer__inner {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 52rem) {
+    .closer__inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  .closer__title {
+    max-width: 20ch;
+  }
+
+  /* --- footer --- */
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding-block: 2.5rem 3.5rem;
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .footer__mark {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+  }
+
+  .footer__disclosure {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    flex: 1 1 18rem;
+  }
+
+  .footer__links {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  .footer__links a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .footer__links a:hover {
+    border-color: var(--accent);
+  }
+
+  .footer__copy {
+    color: var(--ink-faint);
+  }
+</style>

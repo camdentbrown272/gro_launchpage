@@ -1,0 +1,246 @@
+---
+import { waitlistEndpoint, waitlistEncoding } from '../config';
+
+interface Props {
+  /** Distinguishes the hero form from the footer form in your form provider. */
+  source: string;
+  label?: string;
+  cta?: string;
+  note?: string;
+}
+
+const {
+  source,
+  label = 'Email address',
+  cta = 'Join the waitlist',
+  note = 'No spam. Only one email when it launches.',
+} = Astro.props;
+---
+
+<div class="waitlist" data-state="idle" data-endpoint={waitlistEndpoint}
+  data-encoding={waitlistEncoding} data-source={source}>
+  <form class="form" novalidate>
+    <label class="sr-only" for={`email-${source}`}>{label}</label>
+    <input
+      id={`email-${source}`}
+      class="input"
+      type="email"
+      name="email"
+      inputmode="email"
+      autocomplete="email"
+      placeholder="you@email.com"
+      required
+    />
+    <!-- Honeypot: real people leave this empty. -->
+    <input class="sr-only" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <button class="button" type="submit">
+      <span class="button__label">{cta}</span>
+      <span class="button__pending" aria-hidden="true">Sending…</span>
+    </button>
+  </form>
+
+  <p class="note">{note}</p>
+  <p class="message" role="status" aria-live="polite"></p>
+</div>
+
+<style>
+  .waitlist {
+    width: 100%;
+    max-width: 30rem;
+  }
+
+  .form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .input {
+    flex: 1 1 13rem;
+    min-width: 0;
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: 9px;
+    padding: 0.8rem 0.95rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .input::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-wash);
+  }
+
+  .button {
+    flex: 0 0 auto;
+    position: relative;
+    font: inherit;
+    font-weight: 500;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 9px;
+    padding: 0.8rem 1.35rem;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .button:hover {
+    opacity: 0.88;
+  }
+
+  .button:active {
+    transform: translateY(1px);
+  }
+
+  .button__pending {
+    display: none;
+  }
+
+  .note {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    margin-top: 0.7rem;
+  }
+
+  .message {
+    font-size: 0.9rem;
+    margin-top: 0.7rem;
+    display: none;
+  }
+
+  /* --- states --- */
+
+  .waitlist[data-state='pending'] .input,
+  .waitlist[data-state='pending'] .button {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .waitlist[data-state='pending'] .button__label {
+    display: none;
+  }
+
+  .waitlist[data-state='pending'] .button__pending {
+    display: inline;
+  }
+
+  .waitlist[data-state='error'] .message,
+  .waitlist[data-state='success'] .message {
+    display: block;
+  }
+
+  .waitlist[data-state='error'] .message {
+    color: #a8332a;
+  }
+
+  .waitlist[data-state='success'] .form,
+  .waitlist[data-state='success'] .note {
+    display: none;
+  }
+
+  .waitlist[data-state='success'] .message {
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .waitlist[data-state='error'] .message {
+      color: #ef8078;
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+  type State = 'idle' | 'pending' | 'success' | 'error';
+
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  document.querySelectorAll<HTMLElement>('.waitlist').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('form');
+    const input = root.querySelector<HTMLInputElement>('input[type="email"]');
+    const honeypot = root.querySelector<HTMLInputElement>('input[name="company"]');
+    const message = root.querySelector<HTMLParagraphElement>('.message');
+    if (!form || !input || !message) return;
+
+    const endpoint = root.dataset.endpoint ?? '';
+    const source = root.dataset.source ?? 'unknown';
+
+    const set = (state: State, text = '') => {
+      root.dataset.state = state;
+      message.textContent = text;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (root.dataset.state === 'pending') return;
+
+      const email = input.value.trim();
+      if (!EMAIL.test(email)) {
+        set('error', 'That email looks off — mind checking it?');
+        input.focus();
+        return;
+      }
+
+      // Bot filled the hidden field. Fake a success and drop it.
+      if (honeypot?.value) {
+        set('success', "You're on the list.");
+        return;
+      }
+
+      if (!endpoint) {
+        console.warn(
+          '[Gro] No waitlist endpoint set. Emails are NOT being saved. ' +
+            'Set `waitlistEndpoint` in src/config.ts before you send anyone here.',
+        );
+        set('error', 'The waitlist is not connected yet. Try again shortly.');
+        return;
+      }
+
+      set('pending');
+
+      try {
+        // Some providers only accept url-encoded bodies; `waitlistEncoding` picks.
+        const useForm = root.dataset.encoding === 'form';
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: useForm
+            ? { Accept: 'application/json' }
+            : { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: useForm
+            ? new URLSearchParams({ email, source })
+            : JSON.stringify({ email, source }),
+        });
+
+        if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+
+        set('success', "You're on the list. One email when it opens.");
+      } catch (error) {
+        console.error('[Gro] Waitlist submission failed.', error);
+        set('error', "That didn't go through. Try again in a moment?");
+      }
+    });
+
+    input.addEventListener('input', () => {
+      if (root.dataset.state === 'error') set('idle');
+    });
+  });
+</script>
