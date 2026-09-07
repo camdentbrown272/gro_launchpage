@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "gro-waitlist",
+  "main": "waitlist.js",
+  "compatibility_date": "2026-09-07",
+
+  // Plain, non-secret config. Keep these here rather than in the dashboard:
+  // `wrangler deploy` overwrites dashboard vars, so config-as-code avoids
+  // silently losing them on the next deploy.
+  "vars": {
+    "FROM": "Gro <hello@gro-usa.com>",
+    // Paste your Resend audience id here. Left empty, the Worker still sends
+    // the confirmation, it just does not store the contact.
+    "AUDIENCE_ID": ""
+  },
+
+  // Workers Logs, so `npm run logs` and the dashboard show what happened.
+  "observability": {
+    "enabled": true
+  }
+
+  // RESEND_API_KEY is deliberately absent — it is a secret, set with
+  //   npx wrangler secret put RESEND_API_KEY
+  // and must never be written into this file.
+}
