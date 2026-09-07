@@ -21,9 +21,14 @@ nameservers at GoDaddy — the site stays on GitHub Pages and DNS stays as it is
    add them at GoDaddy's DNS manager, then hit Verify. This is what lets mail
    come from `hello@gro-usa.com` instead of a shared sender, and it is what
    keeps the confirmation out of spam.
-3. **Audiences → Create** — this is your list. Copy its ID.
-4. **API Keys → Create**, permission *Sending access*. Copy it now; Resend
+3. **API Keys → Create**, permission *Sending access*. Copy it now; Resend
    shows it once.
+
+There is no audience or list to create first. Resend's audience-scoped
+endpoints are deprecated in favour of segments, and the Worker posts to the
+account-level `/contacts` endpoint, so signups are saved from the first
+request. Set `SEGMENT_ID` in `wrangler.jsonc` only if you later want them
+filed under a named segment.
 
 ### 2. Cloudflare
 
@@ -33,9 +38,10 @@ nameservers at GoDaddy — the site stays on GitHub Pages and DNS stays as it is
    `gro-waitlist`, then Deploy.
 3. **Edit code**, delete the sample, paste all of `waitlist.js`, Deploy.
 4. **Settings → Variables and Secrets**, add:
-   - `RESEND_API_KEY` — type **Secret** — the key from step 1.4
-   - `AUDIENCE_ID` — type Text — the audience ID from step 1.3
-   - `FROM` — type Text — `Gro <hello@gro-usa.com>`
+   - `RESEND_API_KEY` — type **Secret** — the key from step 1.3
+
+   `FROM` and `SEGMENT_ID` live in `wrangler.jsonc`, not the dashboard —
+   `wrangler deploy` overwrites dashboard variables.
 5. Copy the Worker URL, which looks like
    `https://gro-waitlist.<your-subdomain>.workers.dev`.
 

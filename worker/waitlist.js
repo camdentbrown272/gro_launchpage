@@ -10,8 +10,12 @@
  *
  * Configure in Cloudflare → your Worker → Settings → Variables and Secrets:
  *   RESEND_API_KEY  (type: Secret)   re_xxxxxxxx
- *   AUDIENCE_ID     (type: Text)     optional — Resend Audience to add contacts to
  *   FROM            (type: Text)     e.g.  Gro <hello@gro-usa.com>
+ *   SEGMENT_ID      (type: Text)     optional — a Resend segment to file contacts under
+ *
+ * Contacts go to the account-level contact list. Resend's audience-scoped
+ * endpoints are deprecated in favour of segments, so nothing needs creating
+ * up front for this to work.
  */
 
 const ALLOWED_ORIGINS = new Set([
@@ -85,18 +89,20 @@ export default {
 
     // 1. Save the contact. A repeat signup returns a 409 from Resend, which is
     //    not a failure worth showing the visitor — so this never blocks step 2.
-    if (env.AUDIENCE_ID) {
-      try {
-        const stored = await fetch(
-          `https://api.resend.com/audiences/${env.AUDIENCE_ID}/contacts`,
-          { method: 'POST', headers: auth, body: JSON.stringify({ email, unsubscribed: false }) },
-        );
-        if (!stored.ok && stored.status !== 409) {
-          console.error('Audience write failed', stored.status, await stored.text());
-        }
-      } catch (error) {
-        console.error('Audience write threw', error);
+    const contact = { email, unsubscribed: false };
+    if (env.SEGMENT_ID) contact.segments = [{ id: env.SEGMENT_ID }];
+
+    try {
+      const stored = await fetch('https://api.resend.com/contacts', {
+        method: 'POST',
+        headers: auth,
+        body: JSON.stringify(contact),
+      });
+      if (!stored.ok && stored.status !== 409) {
+        console.error('Contact write failed', stored.status, await stored.text());
       }
+    } catch (error) {
+      console.error('Contact write threw', error);
     }
 
     // 2. Send the confirmation. This one does gate the response — if the

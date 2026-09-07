@@ -9,9 +9,10 @@
   // silently losing them on the next deploy.
   "vars": {
     "FROM": "Gro <hello@gro-usa.com>",
-    // Paste your Resend audience id here. Left empty, the Worker still sends
-    // the confirmation, it just does not store the contact.
-    "AUDIENCE_ID": ""
+    // Optional. Contacts are saved either way — this only files them under a
+    // named segment. Resend's Audiences are deprecated, so there is nothing to
+    // create before the Worker works.
+    "SEGMENT_ID": ""
   },
 
   // Workers Logs, so `npm run logs` and the dashboard show what happened.
