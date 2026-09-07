@@ -9,6 +9,8 @@ interface Props {
 
 const { title = site.title, description = site.description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+// Must be absolute — every social scraper rejects a relative image.
+const ogImage = new URL('/og-image.png', Astro.site ?? Astro.url);
 ---
 
 <!doctype html>
@@ -23,10 +25,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <meta name="description" content={description} />
 
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Gro — a feed that ends" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <link rel="preload" href="/fonts/cutive-mono-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin />
