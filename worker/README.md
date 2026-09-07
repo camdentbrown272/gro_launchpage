@@ -1,6 +1,18 @@
 # Waitlist Worker
 
-`waitlist.js` is a Cloudflare Worker that backs the waitlist form. It exists
+`waitlist.js` is a Cloudflare Worker backing both forms on the launch page:
+
+| Route | Body | Does |
+| --- | --- | --- |
+| `POST /` | `{email, source}` | Saves the contact, sends the confirmation |
+| `POST /request` | `{request, subject, from?}` | Emails the request to `REQUEST_TO`, `reply_to` set when an address was given |
+
+Both are rate limited to 5 requests per minute per IP, checked before any
+Resend call so a flood cannot burn the sending quota. Cloudflare's limiter is
+eventually consistent per-datacenter: a flood is blocked, a slow trickle may
+leak through.
+
+It It exists
 because GitHub Pages is static — there is nowhere on the site to hold a Resend
 API key without shipping it to every visitor.
 
@@ -70,3 +82,14 @@ in the Worker's logs: Cloudflare dashboard → your Worker → **Logs**.
   quietly re-sending.
 - A failed *send* does return an error, so nobody is told they are on the list
   when no email actually went out.
+
+## Email deliverability
+
+SPF and DKIM come from Resend's domain verification. Worth adding a **DMARC**
+TXT record at GoDaddy too — start at `p=none` to monitor:
+
+    _dmarc.gro-usa.com   TXT   v=DMARC1; p=none; rua=mailto:gro.foundation26@gmail.com
+
+It improves deliverability on its own, and it is the prerequisite for BIMI (the
+sender logo in Gmail/Apple Mail) if that is ever worth buying a certificate for.
+BIMI additionally needs `p=quarantine` or `p=reject` plus a paid CMC or VMC.

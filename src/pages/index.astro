@@ -43,13 +43,22 @@ const steps = [
   <header class="masthead">
     <div class="wrap masthead__inner">
       <a class="wordmark" href="/">{site.name}<span class="wordmark__dot">.</span></a>
-      {
-        links.instagram && (
-          <a class="masthead__link" href={links.instagram} target="_blank" rel="noopener noreferrer">
-            Instagram
-          </a>
-        )
-      }
+      <nav class="masthead__links">
+        {
+          links.instagram && (
+            <a class="masthead__link" href={links.instagram} target="_blank" rel="noopener noreferrer">
+              Instagram
+            </a>
+          )
+        }
+        {
+          links.x && (
+            <a class="masthead__link" href={links.x} target="_blank" rel="noopener noreferrer">
+              X
+            </a>
+          )
+        }
+      </nav>
     </div>
   </header>
 
@@ -240,6 +249,13 @@ const steps = [
             </a>
           )
         }
+        {
+          links.x && (
+            <a href={links.x} target="_blank" rel="noopener noreferrer">
+              X
+            </a>
+          )
+        }
         {links.email && <a href={`mailto:${links.email}`}>Email</a>}
         <span class="footer__copy">&copy; {year}</span>
       </nav>
@@ -269,6 +285,12 @@ const steps = [
 
   .wordmark__dot {
     color: var(--accent);
+  }
+
+  .masthead__links {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
   }
 
   .masthead__link {

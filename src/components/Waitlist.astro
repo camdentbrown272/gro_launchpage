@@ -173,8 +173,46 @@ const {
   type State = 'idle' | 'pending' | 'success' | 'error';
 
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const JOINED_KEY = 'gro:waitlist-joined';
 
-  document.querySelectorAll<HTMLElement>('.waitlist').forEach((root) => {
+  const forms = document.querySelectorAll<HTMLElement>('.waitlist');
+
+  /**
+   * There are two forms on the page (hero and footer). Joining through one
+   * should settle both — otherwise the other keeps asking for an email you
+   * already gave.
+   */
+  const markAllJoined = (text: string) => {
+    forms.forEach((el) => {
+      el.dataset.state = 'success';
+      const msg = el.querySelector<HTMLParagraphElement>('.message');
+      if (msg) msg.textContent = text;
+    });
+  };
+
+  // localStorage throws outright in some privacy modes rather than returning
+  // null, so every access is guarded and a failure just means no memory.
+  const remember = () => {
+    try {
+      localStorage.setItem(JOINED_KEY, '1');
+    } catch {
+      /* not worth surfacing — the signup already succeeded */
+    }
+  };
+
+  const alreadyJoined = () => {
+    try {
+      return localStorage.getItem(JOINED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  };
+
+  if (alreadyJoined()) {
+    markAllJoined("You're already on the list. One email when it opens.");
+  }
+
+  forms.forEach((root) => {
     const form = root.querySelector<HTMLFormElement>('form');
     const input = root.querySelector<HTMLInputElement>('input[type="email"]');
     const honeypot = root.querySelector<HTMLInputElement>('input[name="company"]');
@@ -200,7 +238,8 @@ const {
         return;
       }
 
-      // Bot filled the hidden field. Fake a success and drop it.
+      // Bot filled the hidden field. Fake a success for this form only, and
+      // deliberately do not remember it — nothing was actually submitted.
       if (honeypot?.value) {
         set('success', "You're on the list.");
         return;
@@ -232,7 +271,8 @@ const {
 
         if (!response.ok) throw new Error(`Request failed: ${response.status}`);
 
-        set('success', "You're on the list. One email when it opens.");
+        remember();
+        markAllJoined("You're on the list. One email when it opens.");
       } catch (error) {
         console.error('[Gro] Waitlist submission failed.', error);
         set('error', "That didn't go through. Try again in a moment?");

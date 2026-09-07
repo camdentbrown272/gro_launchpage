@@ -18,6 +18,16 @@ import { links, featureRequestSubject, featureRequestEndpoint } from '../config'
       rows="4"
       placeholder="A feature, a founder you want on here, something that annoys you…"
       required></textarea>
+    <label class="sr-only" for="request-email">Your email, optional</label>
+    <input
+      id="request-email"
+      class="request__from"
+      type="email"
+      name="from"
+      inputmode="email"
+      autocomplete="email"
+      placeholder="your email — optional, only so we can reply"
+    />
     <div class="request__actions">
       <button class="request__button" type="submit">Send request</button>
       <span class="request__hint">Subject is filled in for you.</span>
@@ -74,6 +84,26 @@ import { links, featureRequestSubject, featureRequestEndpoint } from '../config'
   }
 
   .request__input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-wash);
+  }
+
+  .request__from {
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule-strong);
+    border-radius: 10px;
+    padding: 0.7rem 0.95rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .request__from::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .request__from:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-wash);
@@ -165,6 +195,7 @@ import { links, featureRequestSubject, featureRequestEndpoint } from '../config'
   document.querySelectorAll<HTMLElement>('.request').forEach((root) => {
     const form = root.querySelector<HTMLFormElement>('form');
     const input = root.querySelector<HTMLTextAreaElement>('textarea');
+    const from = root.querySelector<HTMLInputElement>('.request__from');
     const message = root.querySelector<HTMLParagraphElement>('.request__message');
     const fallback = root.querySelector<HTMLParagraphElement>('.request__fallback');
     const copy = root.querySelector<HTMLButtonElement>('.request__copy');
@@ -195,7 +226,7 @@ import { links, featureRequestSubject, featureRequestEndpoint } from '../config'
           const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify({ request: body, subject }),
+            body: JSON.stringify({ request: body, subject, from: from?.value.trim() || undefined }),
           });
 
           if (!response.ok) throw new Error(`Request failed: ${response.status}`);
@@ -203,6 +234,7 @@ import { links, featureRequestSubject, featureRequestEndpoint } from '../config'
           root.dataset.state = 'sent';
           message.textContent = 'Sent — thank you. We read every one of these.';
           input.value = '';
+          if (from) from.value = '';
         } catch (error) {
           console.error('[Gro] Feature request failed to send.', error);
           root.dataset.state = 'error';

@@ -42,8 +42,9 @@ export const product = {
 } as const;
 
 export const links = {
-  /** TODO: swap in the real handle. Set to null to hide the Instagram links. */
+  /** Set either to null to hide that link. Note the handles differ by a letter. */
   instagram: 'https://instagram.com/thefoundersbrief' as string | null,
+  x: 'https://x.com/thefoundrsbrief' as string | null,
   /** Where "questions?" mail goes. Set to null to hide it. */
   email: null as string | null,
   /**
@@ -66,7 +67,7 @@ export const featureRequestSubject = 'Feature request';
  * Leave it empty and the form falls back to opening the visitor's mail client
  * with the address and subject pre-filled.
  */
-export const featureRequestEndpoint = '';
+export const featureRequestEndpoint = 'https://gro-waitlist.grolaunch.workers.dev/request';
 
 /**
  * SCREENSHOTS — placeholders until you send me the real ones.

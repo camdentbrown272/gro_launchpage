@@ -15,11 +15,26 @@
   // silently losing them on the next deploy.
   "vars": {
     "FROM": "Gro <hello@gro-usa.com>",
+    // Where the launch page's feature requests are emailed.
+    "REQUEST_TO": "gro.foundation26@gmail.com",
     // Optional. Contacts are saved either way — this only files them under a
     // named segment. Resend's Audiences are deprecated, so there is nothing to
     // create before the Worker works.
     "SEGMENT_ID": ""
   },
+
+  // Both routes spend a live Resend key, so throttle by IP before any send.
+  // `period` accepts only 10 or 60.
+  "ratelimits": [
+    {
+      "name": "SUBMIT_LIMIT",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
+    }
+  ],
 
   // Workers Logs, so `npm run logs` and the dashboard show what happened.
   "observability": {
