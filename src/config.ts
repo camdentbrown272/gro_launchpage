@@ -8,7 +8,7 @@ export const site = {
   /** Shows up in the browser tab and in link previews. */
   title: 'Gro — a feed that ends',
   description:
-    'Fifteen things a day about building a company, then it stops. No infinite scroll, no algorithm learning how to keep you here.',
+    'Fifteen posts a day about entrepreneurship, business, and making money. Then it stops — no infinite scroll, no algorithm learning what keeps you here.',
 } as const;
 
 /**
