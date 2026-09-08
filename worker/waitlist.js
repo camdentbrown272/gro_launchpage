@@ -127,8 +127,9 @@ async function handleWaitlist(data, env, cors) {
   const contact = { email, unsubscribed: false };
   if (env.SEGMENT_ID) contact.segments = [{ id: env.SEGMENT_ID }];
 
+  let stored = false;
   try {
-    const stored = await fetch('https://api.resend.com/contacts', {
+    const write = await fetch('https://api.resend.com/contacts', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -136,8 +137,10 @@ async function handleWaitlist(data, env, cors) {
       },
       body: JSON.stringify(contact),
     });
-    if (!stored.ok && stored.status !== 409) {
-      console.error('Contact write failed', stored.status, await stored.text());
+    // 409 means the contact already exists, which is still stored.
+    stored = write.ok || write.status === 409;
+    if (!stored) {
+      console.error('Contact write failed', write.status, await write.text());
     }
   } catch (error) {
     console.error('Contact write threw', error);
@@ -157,8 +160,11 @@ async function handleWaitlist(data, env, cors) {
     return reply({ error: 'Could not send confirmation' }, 502, cors);
   }
 
-  console.log('signup', { source });
-  return reply({ ok: true }, 200, cors);
+  // `stored` is reported so a silently failing contact write can be spotted
+  // without digging through logs. It deliberately does not gate the response:
+  // the confirmation went out, so the visitor is genuinely signed up.
+  console.log('signup', { source, stored });
+  return reply({ ok: true, stored }, 200, cors);
 }
 
 async function handleRequest(data, env, cors) {

@@ -86,29 +86,32 @@ export type Shot = {
   readonly placeholder: string;
 };
 
-/** The single phone beside the headline. */
+/**
+ * The single phone beside the headline. It reuses the feed screenshot rather
+ * than needing one of its own — three images cover the whole page.
+ */
 export const heroShot: Shot = {
-  src: null,
-  alt: 'The Gro daily feed on a phone.',
+  src: '/screenshots/feed.png',
+  alt: 'A post in the Gro feed, from a founder, with a like and topic tags.',
   placeholder: 'the feed',
 };
 
 export const shots: readonly Shot[] = [
   {
-    src: null,
-    alt: 'The Gro daily feed, showing the first card of fifteen.',
-    caption: 'Today, all of it',
+    src: '/screenshots/feed.png',
+    alt: 'A post in the Gro feed, from a founder, with a like and topic tags.',
+    caption: 'One idea per card',
     placeholder: 'the feed',
   },
   {
-    src: null,
-    alt: 'A single card in the Gro feed.',
-    caption: 'One idea per card',
-    placeholder: 'a card',
+    src: '/screenshots/profile.png',
+    alt: 'A Gro profile showing what that person is chasing and what they are building.',
+    caption: 'Everyone here is building',
+    placeholder: 'a profile',
   },
   {
-    src: null,
-    alt: 'The end-of-feed screen in Gro.',
+    src: '/screenshots/end.png',
+    alt: 'The end-of-feed screen: you have seen enough, go make something worth posting.',
     caption: 'And then you leave',
     placeholder: 'the end',
   },
