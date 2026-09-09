@@ -106,7 +106,7 @@ export const shots: readonly Shot[] = [
   {
     src: '/screenshots/profile.png',
     alt: 'A Gro profile showing what that person is chasing and what they are building.',
-    caption: 'You see who wrote it',
+    caption: 'Only entrepreneurs post',
     placeholder: 'a profile',
   },
   {
