@@ -1,0 +1,196 @@
+---
+import Base from './Base.astro';
+import { site, links } from '../config';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Raw HTML, imported verbatim from src/content — never retyped. */
+  body: string;
+}
+
+const { title, description, body } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<Base title={`${title} — ${site.name}`} description={description}>
+  <header class="masthead">
+    <div class="wrap masthead__inner">
+      <a class="wordmark" href="/">{site.name}<span class="wordmark__dot">.</span></a>
+      <a class="back" href="/">Back to the site</a>
+    </div>
+  </header>
+
+  <main class="wrap legal">
+    <Fragment set:html={body} />
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p class="footer__mark">{site.name}<span class="wordmark__dot">.</span></p>
+      <nav class="footer__links">
+        <a href="/terms">Terms</a>
+        <a href="/privacy">Privacy</a>
+        {links.instagram && <a href={links.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>}
+        {links.x && <a href={links.x} target="_blank" rel="noopener noreferrer">X</a>}
+        <span class="footer__copy">&copy; {year}</span>
+      </nav>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .masthead {
+    padding-block: 1.5rem;
+  }
+
+  .masthead__inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .wordmark__dot {
+    color: var(--accent);
+  }
+
+  .back {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+    padding-bottom: 1px;
+  }
+
+  .back:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+  }
+
+  /* The document itself. Injected with set:html, so these need :global —
+     Astro's scoping never reaches content it did not compile. */
+  .legal {
+    max-width: 42rem;
+    padding-block: clamp(2rem, 6vw, 4rem) clamp(4rem, 10vw, 6rem);
+    color: var(--ink-soft);
+  }
+
+  .legal :global(h1) {
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .legal :global(.summary) {
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-bottom: 0.6rem;
+    max-width: 34rem;
+  }
+
+  .legal :global(.meta) {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3rem;
+  }
+
+  .legal :global(section) {
+    padding-top: 1.75rem;
+    margin-bottom: 1.75rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .legal :global(h2) {
+    font-size: 1.15rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .legal :global(p) {
+    margin-bottom: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .legal :global(ul) {
+    margin: 0 0 0.9rem;
+    padding-left: 1.1rem;
+  }
+
+  .legal :global(li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.65;
+  }
+
+  .legal :global(li)::marker {
+    color: var(--accent);
+  }
+
+  .legal :global(a) {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .legal :global(a:hover) {
+    border-color: var(--accent);
+  }
+
+  .legal :global(footer) {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+    margin-top: 2.5rem;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding-block: 2.5rem 3.5rem;
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .footer__mark {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    margin: 0;
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 1.25rem;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  .footer__links a {
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  .footer__links a:hover {
+    border-color: var(--accent);
+  }
+
+  .footer__copy {
+    color: var(--ink-faint);
+  }
+</style>

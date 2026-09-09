@@ -1,0 +1,11 @@
+---
+import Legal from '../layouts/Legal.astro';
+// Imported raw so the wording is exactly what was written — nothing retyped.
+import body from '../content/terms.html?raw';
+---
+
+<Legal
+  title="Terms of Use"
+  description="The deal between you and us, in as few words as it can honestly be put."
+  body={body}
+/>
