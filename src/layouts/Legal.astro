@@ -23,6 +23,8 @@ const year = new Date().getFullYear();
 
   <main class="wrap legal">
     <Fragment set:html={body} />
+    <!-- Anything site-specific a page adds after the verbatim document. -->
+    <slot />
   </main>
 
   <footer class="footer">

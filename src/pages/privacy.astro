@@ -1,11 +1,80 @@
 ---
 import Legal from '../layouts/Legal.astro';
+import { links } from '../config';
 // Imported raw so the wording is exactly what was written — nothing retyped.
 import body from '../content/privacy.html?raw';
+
+const contact = links.featureRequests;
 ---
 
 <Legal
   title="Privacy Policy"
   description="What Gro knows about you, who else sees it, and how to get rid of it."
   body={body}
-/>
+>
+  <!-- The policy above is the app's, kept verbatim. This note covers the
+       website itself, which the app policy does not. Keep it in step with
+       worker/waitlist.js and the forms on the homepage. -->
+  <section id="waitlist" class="site-note">
+    <p class="site-note__label">This website</p>
+    <h2>The waitlist and gro-usa.com</h2>
+    <p>
+      Everything above is about the Gro app. This part is about this website, which is not the
+      app and does not need an account.
+    </p>
+    <ul>
+      <li>
+        <strong>The waitlist.</strong> If you join, we keep your email address and nothing else.
+        It is stored as a contact with Resend, the same company that sends the app's account
+        emails. You get one confirmation straight away, and one more email when Gro opens.
+      </li>
+      <li>
+        <strong>Feature requests.</strong> What you type is emailed to us at {contact}, sent
+        through Resend, along with your email address if you chose to give one so we can reply.
+      </li>
+      <li>
+        <strong>How it gets there.</strong> Both forms go through a small program we run on
+        Cloudflare, which passes them to Resend. Cloudflare sees your IP address and uses it to
+        limit how often the forms can be sent, so they cannot be used for spam. The site itself is
+        hosted by GitHub Pages, which keeps ordinary server logs like any host.
+      </li>
+      <li>
+        <strong>Nothing else.</strong> No analytics, no cookies, no ads, no tracking, and the fonts
+        are served from this site rather than from Google. After you join, your browser remembers
+        that you did so the form does not ask again. That is a single flag on your device, not
+        your email address, and it is never sent to us.
+      </li>
+    </ul>
+    <p>
+      To come off the waitlist, email <a href={`mailto:${contact}`}>{contact}</a> from the address
+      you signed up with and we will delete it.
+    </p>
+  </section>
+</Legal>
+
+<style>
+  /* Set apart from the policy above, so it reads as a separate note about the
+     website rather than another clause of the app policy. */
+  .site-note {
+    margin-top: 3rem;
+    padding: 1.5rem 1.5rem 0.75rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 12px;
+    background: var(--paper-raised);
+    scroll-margin-top: 2rem;
+  }
+
+  .site-note__label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .site-note strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+</style>
