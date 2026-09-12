@@ -14,7 +14,7 @@
   // `wrangler deploy` overwrites dashboard vars, so config-as-code avoids
   // silently losing them on the next deploy.
   "vars": {
-    "FROM": "Gro <hello@gro-usa.com>",
+    "FROM": "Briefly <hello@gro-usa.com>",
     // Where the launch page's feature requests are emailed.
     "REQUEST_TO": "gro.foundation26@gmail.com",
     // Optional. Contacts are saved either way — this only files them under a

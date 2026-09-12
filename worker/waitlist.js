@@ -1,5 +1,5 @@
 /**
- * Gro — waitlist and feature-request Worker
+ * Briefly — waitlist and feature-request Worker
  *
  * Two routes:
  *   POST /          { email, source }            → save contact + send confirmation
@@ -14,7 +14,7 @@
  *
  * Everything else lives in wrangler.jsonc, because `wrangler deploy`
  * overwrites dashboard variables:
- *   FROM         sender, e.g.  Gro <hello@gro-usa.com>
+ *   FROM         sender, e.g.  Briefly <hello@gro-usa.com>
  *   REQUEST_TO   where feature requests land
  *   SEGMENT_ID   optional Resend segment to file contacts under
  */
@@ -54,12 +54,12 @@ const escapeHtml = (value) =>
 const confirmationText = `You're on the list.
 
 That's it — no drip sequence, no weekly newsletter. One more email from us,
-when Gro opens.
+when Briefly opens.
 
 Fifteen posts a day about entrepreneurship, business, and making money.
 Then it stops.
 
-— Gro
+— Briefly
 https://gro-usa.com
 `;
 
@@ -71,14 +71,14 @@ const confirmationHtml = `<!doctype html>
     <tr><td align="center" style="padding:40px 20px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;">
         <tr><td style="padding-bottom:28px;font-family:'Courier New',Courier,monospace;font-size:22px;color:#15160f;">
-          Gro<span style="color:#2f5d3f;">.</span>
+          Briefly<span style="color:#2f5d3f;">.</span>
         </td></tr>
         <tr><td style="font-family:'Courier New',Courier,monospace;font-size:28px;line-height:1.25;color:#15160f;padding-bottom:20px;">
           You're on the list.
         </td></tr>
         <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#4c4e44;padding-bottom:14px;">
           That's it &mdash; no drip sequence, no weekly newsletter. One more email
-          from us, when Gro opens.
+          from us, when Briefly opens.
         </td></tr>
         <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#4c4e44;padding-bottom:28px;">
           Fifteen posts a day about entrepreneurship, business, and making money.
@@ -112,7 +112,7 @@ async function sendEmail(env, payload) {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ from: env.FROM || 'Gro <hello@gro-usa.com>', ...payload }),
+    body: JSON.stringify({ from: env.FROM || 'Briefly <hello@gro-usa.com>', ...payload }),
   });
 }
 
@@ -150,7 +150,7 @@ async function handleWaitlist(data, env, cors) {
   //    goes out, the visitor should not be told they are on the list.
   const sent = await sendEmail(env, {
     to: email,
-    subject: "You're on the Gro waitlist",
+    subject: "You're on the Briefly waitlist",
     html: confirmationHtml,
     text: confirmationText,
   });

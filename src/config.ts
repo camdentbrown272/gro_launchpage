@@ -4,9 +4,9 @@
  */
 
 export const site = {
-  name: 'Gro',
+  name: 'Briefly',
   /** Shows up in the browser tab and in link previews. */
-  title: 'Gro — a feed that ends',
+  title: 'Briefly — a feed that ends',
   description:
     'Fifteen posts a day about entrepreneurship, business, and making money. Then it stops — no infinite scroll, no algorithm learning what keeps you here.',
 } as const;
@@ -92,20 +92,20 @@ export type Shot = {
  */
 export const heroShot: Shot = {
   src: '/screenshots/feed.png',
-  alt: 'A post in the Gro feed, from a founder, with a like and topic tags.',
+  alt: 'A post in the Briefly feed, from a founder, with a like and topic tags.',
   placeholder: 'the feed',
 };
 
 export const shots: readonly Shot[] = [
   {
     src: '/screenshots/feed.png',
-    alt: 'A post in the Gro feed, from a founder, with a like and topic tags.',
+    alt: 'A post in the Briefly feed, from a founder, with a like and topic tags.',
     caption: 'One idea per card',
     placeholder: 'the feed',
   },
   {
     src: '/screenshots/profile.png',
-    alt: 'A Gro profile showing what that person is chasing and what they are building.',
+    alt: 'A Briefly profile showing what that person is chasing and what they are building.',
     caption: 'Only entrepreneurs post',
     placeholder: 'a profile',
   },

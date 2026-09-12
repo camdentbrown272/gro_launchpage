@@ -1,6 +1,6 @@
-# Gro — launch page
+# Briefly — launch page
 
-A one-page waitlist site for Gro, built with [Astro](https://astro.build) + TypeScript.
+A one-page waitlist site for Briefly, built with [Astro](https://astro.build) + TypeScript.
 Static output, no backend, no build-time API keys.
 
 ## Run it

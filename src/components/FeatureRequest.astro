@@ -236,7 +236,7 @@ import { links, featureRequestSubject, featureRequestEndpoint } from '../config'
           input.value = '';
           if (from) from.value = '';
         } catch (error) {
-          console.error('[Gro] Feature request failed to send.', error);
+          console.error('[Briefly] Feature request failed to send.', error);
           root.dataset.state = 'error';
           message.textContent = "That didn't go through. Try again in a moment?";
           fallback.hidden = false;

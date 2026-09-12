@@ -258,7 +258,7 @@ const {
 
       if (!endpoint) {
         console.warn(
-          '[Gro] No waitlist endpoint set. Emails are NOT being saved. ' +
+          '[Briefly] No waitlist endpoint set. Emails are NOT being saved. ' +
             'Set `waitlistEndpoint` in src/config.ts before you send anyone here.',
         );
         set('error', 'The waitlist is not connected yet. Try again shortly.');
@@ -285,7 +285,7 @@ const {
         remember();
         markAllJoined("You're on the list. One email when it opens.");
       } catch (error) {
-        console.error('[Gro] Waitlist submission failed.', error);
+        console.error('[Briefly] Waitlist submission failed.', error);
         set('error', "That didn't go through. Try again in a moment?");
       }
     });
